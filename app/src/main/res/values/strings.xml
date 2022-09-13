@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PwdHash Droid</string>
+
+    <string name="site_address">Site Address</string>
+    <string name="site_password">Site Password</string>
+    <string name="generate_action">Generate</string>
 </resources>
