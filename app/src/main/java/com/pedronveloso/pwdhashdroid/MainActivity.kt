@@ -105,6 +105,7 @@ fun MainInputArea(
     onGeneratedHashChange: (String) -> Unit
 ) {
     // TODO: write tests for this Composable.
+    Spacer(modifier = Modifier.size(16.dp))
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,7 +118,6 @@ fun MainInputArea(
 
         // Site Password.
         // TODO: Recognize the Enter key as a valid take action trigger.
-        // TODO: Hide virtual keyboard when pressing "done".
         Spacer(modifier = Modifier.size(8.dp))
         PasswordInput(
             siteAddress,
@@ -130,6 +130,19 @@ fun MainInputArea(
         FormButtons(siteAddress, sitePassword, generatedHash, onGeneratedHashChange)
 
         GeneratedHash(generatedHash)
+        Spacer(
+            modifier = Modifier
+                .weight(1f)
+        )
+        AboutButton()
+        Spacer(modifier = Modifier.size(8.dp))
+    }
+}
+
+@Composable
+private fun AboutButton() {
+    TextButton(onClick = { /* Do something! */ }) {
+        Text(text = stringResource(R.string.about))
     }
 }
 
@@ -148,6 +161,8 @@ private fun FormButtons(
     generatedHash: String,
     onGeneratedHashChange: (String) -> Unit
 ) {
+    // TODO: Hide virtual keyboard when pressing "done".
+    // TODO: Pressing Generate button without input will crash the app.
     // Generate button.
     val context = LocalContext.current
     Spacer(modifier = Modifier.size(8.dp))
@@ -158,6 +173,7 @@ private fun FormButtons(
             Text(text = stringResource(R.string.generate_action))
         }
 
+        // Copy to clipboard button.
         if (generatedHash.isNotBlank()) {
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
