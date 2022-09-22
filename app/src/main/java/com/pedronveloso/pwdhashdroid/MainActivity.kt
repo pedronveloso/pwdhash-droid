@@ -127,7 +127,7 @@ fun MainInputArea(
             focus
         )
 
-        FormButtons(siteAddress, sitePassword, generatedHash, onGeneratedHashChange)
+        FormButtons(siteAddress, sitePassword, generatedHash, onGeneratedHashChange, focus)
 
         GeneratedHash(generatedHash)
         Spacer(
@@ -159,16 +159,18 @@ private fun FormButtons(
     siteAddress: String,
     sitePassword: String,
     generatedHash: String,
-    onGeneratedHashChange: (String) -> Unit
+    onGeneratedHashChange: (String) -> Unit,
+    focus: FocusManager
 ) {
-    // TODO: Hide virtual keyboard when pressing "done".
-    // TODO: Pressing Generate button without input will crash the app.
     // Generate button.
     val context = LocalContext.current
     Spacer(modifier = Modifier.size(8.dp))
     Row(horizontalArrangement = Arrangement.Center) {
         Button(onClick = {
-            generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
+            val succeeded = generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
+            if (succeeded) {
+                focus.clearFocus()
+            }
         }, shape = RoundedCornerShape(8.dp)) {
             Text(text = stringResource(R.string.generate_action))
         }
@@ -177,6 +179,7 @@ private fun FormButtons(
         if (generatedHash.isNotBlank()) {
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
+                focus.clearFocus()
                 copyToClipboard(context, generatedHash)
             }, shape = RoundedCornerShape(8.dp)) {
                 Icon(
@@ -255,14 +258,20 @@ fun copyToClipboard(context: Context, hash: String) {
     clipboard.setPrimaryClip(clipData)
 }
 
+/**
+ * @return True if was able to generate Hash with success, False otherwise.
+ */
 fun generateHashAction(
     siteAddress: String,
     sitePassword: String,
     onGeneratedHashChange: (String) -> Unit
-) {
-    // TODO: Shouldn't execute if either of the parameters is blank.
+): Boolean {
+    if (siteAddress.isBlank() || sitePassword.isBlank()) {
+        return false
+    }
     val hashedPassword = HashedPassword.create(sitePassword, siteAddress)
     onGeneratedHashChange(hashedPassword.toString())
+    return true
 }
 
 @Preview(showBackground = true)
