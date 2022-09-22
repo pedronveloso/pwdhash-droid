@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.pedronveloso.pwdhashdroid
 
 import android.content.ClipData
@@ -18,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -32,6 +35,7 @@ import com.pedronveloso.pwdhashdroid.ui.theme.PwdHashDroidTheme
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,12 +45,37 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    MainInputWithStateHoisting()
+                    ScaffoldingDefinition()
                 }
             }
         }
     }
+}
+
+@Composable
+fun ScaffoldingDefinition() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(R.string.app_name))
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                ),
+            )
+        }, content = {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MainInputWithStateHoisting()
+            }
+        })
 }
 
 @Composable
@@ -78,14 +107,20 @@ fun MainInputArea(
     // TODO: write tests for this Composable.
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment  =  Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center) {
         val focus = LocalFocusManager.current
+
+        // TODO: Change to next field when pressing Tab key.
         // Site Address.
         OutlinedTextField(
             value = siteAddress,
             onValueChange = onSiteAddressChange,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Next, autoCorrect = false),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Next,
+                autoCorrect = false
+            ),
             keyboardActions = KeyboardActions(
                 onNext = { focus.moveFocus(FocusDirection.Next) }
             ),
@@ -93,6 +128,8 @@ fun MainInputArea(
         )
 
         // Site Password.
+        // TODO: Recognize the Enter key as a valid take action trigger.
+        // TODO: Hide virtual keyboard when pressing "done".
         Spacer(modifier = Modifier.size(8.dp))
         OutlinedTextField(
             value = sitePassword,
