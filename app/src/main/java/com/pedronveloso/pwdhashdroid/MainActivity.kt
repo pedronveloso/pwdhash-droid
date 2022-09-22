@@ -18,10 +18,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -113,11 +119,8 @@ fun MainInputArea(
     ) {
         val focus = LocalFocusManager.current
 
-        // TODO: Change to next field when pressing Tab key.
         WebsiteAddressInput(siteAddress, onSiteAddressChange, focus)
 
-        // Site Password.
-        // TODO: Recognize the Enter key as a valid take action trigger.
         Spacer(modifier = Modifier.size(8.dp))
         PasswordInput(
             siteAddress,
@@ -194,6 +197,7 @@ private fun FormButtons(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PasswordInput(
     siteAddress: String,
@@ -208,6 +212,22 @@ private fun PasswordInput(
         singleLine = true,
         label = { Text(stringResource(R.string.site_password)) },
         visualTransformation = PasswordVisualTransformation(),
+        modifier = Modifier
+            .focusRequester(FocusRequester.Default)
+            .onKeyEvent {
+                when (it.key) {
+                    Key.Enter -> {
+                        focus.clearFocus()
+                        generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
+                        true
+                    }
+                    Key.Tab -> {
+                        focus.moveFocus(FocusDirection.Next)
+                        true
+                    }
+                    else -> false
+                }
+            },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
@@ -222,6 +242,7 @@ private fun PasswordInput(
 
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun WebsiteAddressInput(
     siteAddress: String,
@@ -232,13 +253,24 @@ private fun WebsiteAddressInput(
         value = siteAddress,
         onValueChange = onSiteAddressChange,
         singleLine = true,
+        modifier = Modifier
+            .focusRequester(FocusRequester.Default)
+            .onKeyEvent {
+                when (it.key) {
+                    Key.Tab -> {
+                        focus.moveFocus(FocusDirection.Next)
+                        true
+                    }
+                    else -> false
+                }
+            },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Uri,
             imeAction = ImeAction.Next,
             autoCorrect = false
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focus.moveFocus(FocusDirection.Next) }
+            onNext = { focus.moveFocus(FocusDirection.Next) },
         ),
         label = { Text(stringResource(R.string.site_address)) }
     )
