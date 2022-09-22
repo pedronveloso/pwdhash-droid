@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -94,7 +95,6 @@ fun MainInputWithStateHoisting(hashInitialValue: String = "") {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainInputArea(
     siteAddress: String,
@@ -105,82 +105,124 @@ fun MainInputArea(
     onGeneratedHashChange: (String) -> Unit
 ) {
     // TODO: write tests for this Composable.
-    Column(modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment  =  Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         val focus = LocalFocusManager.current
 
         // TODO: Change to next field when pressing Tab key.
-        // Site Address.
-        OutlinedTextField(
-            value = siteAddress,
-            onValueChange = onSiteAddressChange,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Uri,
-                imeAction = ImeAction.Next,
-                autoCorrect = false
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focus.moveFocus(FocusDirection.Next) }
-            ),
-            label = { Text(stringResource(R.string.site_address)) }
-        )
+        WebsiteAddressInput(siteAddress, onSiteAddressChange, focus)
 
         // Site Password.
         // TODO: Recognize the Enter key as a valid take action trigger.
         // TODO: Hide virtual keyboard when pressing "done".
         Spacer(modifier = Modifier.size(8.dp))
-        OutlinedTextField(
-            value = sitePassword,
-            onValueChange = onSidePasswordChange,
-            singleLine = true,
-            label = { Text(stringResource(R.string.site_password)) },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focus.clearFocus()
-                    generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
-                }
-            )
+        PasswordInput(
+            siteAddress,
+            sitePassword,
+            onSidePasswordChange,
+            onGeneratedHashChange,
+            focus
         )
 
-        // Generate button.
-        val context = LocalContext.current
-        Spacer(modifier = Modifier.size(8.dp))
-        Row(horizontalArrangement = Arrangement.Center) {
-            Button(onClick = {
-                generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
-            }, shape = RoundedCornerShape(8.dp)) {
-                Text(text = stringResource(R.string.generate_action))
-            }
+        FormButtons(siteAddress, sitePassword, generatedHash, onGeneratedHashChange)
 
-            if (generatedHash.isNotBlank()) {
-                Spacer(modifier = Modifier.size(16.dp))
-                Button(onClick = {
-                    copyToClipboard(context, generatedHash)
-                }, shape = RoundedCornerShape(8.dp)) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_copy),
-                        contentDescription = stringResource(R.string.copy_to_clipboard),
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(text = stringResource(R.string.copy_to_clipboard))
-                }
-            }
+        GeneratedHash(generatedHash)
+    }
+}
+
+@Composable
+private fun GeneratedHash(generatedHash: String) {
+    Spacer(modifier = Modifier.size(8.dp))
+    if (generatedHash.isNotBlank()) {
+        Text(text = generatedHash)
+    }
+}
+
+@Composable
+private fun FormButtons(
+    siteAddress: String,
+    sitePassword: String,
+    generatedHash: String,
+    onGeneratedHashChange: (String) -> Unit
+) {
+    // Generate button.
+    val context = LocalContext.current
+    Spacer(modifier = Modifier.size(8.dp))
+    Row(horizontalArrangement = Arrangement.Center) {
+        Button(onClick = {
+            generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
+        }, shape = RoundedCornerShape(8.dp)) {
+            Text(text = stringResource(R.string.generate_action))
         }
 
-        // Generated Hash.
-        Spacer(modifier = Modifier.size(8.dp))
         if (generatedHash.isNotBlank()) {
-            Text(text = generatedHash)
+            Spacer(modifier = Modifier.size(16.dp))
+            Button(onClick = {
+                copyToClipboard(context, generatedHash)
+            }, shape = RoundedCornerShape(8.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_copy),
+                    contentDescription = stringResource(R.string.copy_to_clipboard),
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(text = stringResource(R.string.copy_to_clipboard))
+            }
         }
     }
+}
+
+@Composable
+private fun PasswordInput(
+    siteAddress: String,
+    sitePassword: String,
+    onSidePasswordChange: (String) -> Unit,
+    onGeneratedHashChange: (String) -> Unit,
+    focus: FocusManager
+) {
+    OutlinedTextField(
+        value = sitePassword,
+        onValueChange = onSidePasswordChange,
+        singleLine = true,
+        label = { Text(stringResource(R.string.site_password)) },
+        visualTransformation = PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focus.clearFocus()
+                generateHashAction(siteAddress, sitePassword, onGeneratedHashChange)
+            }
+        )
+    )
+
+}
+
+@Composable
+private fun WebsiteAddressInput(
+    siteAddress: String,
+    onSiteAddressChange: (String) -> Unit,
+    focus: FocusManager
+) {
+    OutlinedTextField(
+        value = siteAddress,
+        onValueChange = onSiteAddressChange,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Uri,
+            imeAction = ImeAction.Next,
+            autoCorrect = false
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = { focus.moveFocus(FocusDirection.Next) }
+        ),
+        label = { Text(stringResource(R.string.site_address)) }
+    )
 }
 
 fun copyToClipboard(context: Context, hash: String) {
