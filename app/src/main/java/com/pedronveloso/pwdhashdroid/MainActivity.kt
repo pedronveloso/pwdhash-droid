@@ -37,7 +37,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.pedronveloso.pwdhashdroid.hash.HashedPassword
+import com.pedronveloso.pwdhashdroid.ui.about.AboutScreen
 import com.pedronveloso.pwdhashdroid.ui.theme.PwdHashDroidTheme
 
 
@@ -52,7 +56,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ScaffoldingDefinition()
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = Screens.MAIN) {
+                        composable(Screens.MAIN) {
+                            MainScreen(onNavToAbout = {
+                                navController.navigate(
+                                    Screens.ABOUT
+                                )
+                            })
+                        }
+                        composable(Screens.ABOUT) { AboutScreen() }
+                    }
                 }
             }
         }
@@ -60,7 +74,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScaffoldingDefinition() {
+fun MainScreen(onNavToAbout: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -80,13 +94,13 @@ fun ScaffoldingDefinition() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MainInputWithStateHoisting()
+                MainInputWithStateHoisting(onNavToAbout = onNavToAbout)
             }
         })
 }
 
 @Composable
-fun MainInputWithStateHoisting(hashInitialValue: String = "") {
+fun MainInputWithStateHoisting(hashInitialValue: String = "", onNavToAbout: () -> Unit) {
     var siteAddress by remember { mutableStateOf("") }
     var sitePassword by remember { mutableStateOf("") }
     var generatedHash by remember { mutableStateOf(hashInitialValue) }
@@ -98,6 +112,7 @@ fun MainInputWithStateHoisting(hashInitialValue: String = "") {
         onSidePasswordChange = { sitePassword = it },
         generatedHash = generatedHash,
         onGeneratedHashChange = { generatedHash = it },
+        onNavToAbout = onNavToAbout
     )
 }
 
@@ -108,7 +123,8 @@ fun MainInputArea(
     sitePassword: String,
     onSidePasswordChange: (String) -> Unit,
     generatedHash: String,
-    onGeneratedHashChange: (String) -> Unit
+    onGeneratedHashChange: (String) -> Unit,
+    onNavToAbout: () -> Unit
 ) {
     // TODO: write tests for this Composable.
     Spacer(modifier = Modifier.size(16.dp))
@@ -137,14 +153,16 @@ fun MainInputArea(
             modifier = Modifier
                 .weight(1f)
         )
-        AboutButton()
+        AboutButton(onNavToAbout)
         Spacer(modifier = Modifier.size(8.dp))
     }
 }
 
 @Composable
-private fun AboutButton() {
-    TextButton(onClick = { /* Do something! */ }) {
+private fun AboutButton(onNavToAbout: () -> Unit) {
+    TextButton(onClick = {
+        onNavToAbout()
+    }) {
         Text(text = stringResource(R.string.about))
     }
 }
@@ -310,6 +328,6 @@ fun generateHashAction(
 @Composable
 fun DefaultPreview() {
     PwdHashDroidTheme {
-        MainInputWithStateHoisting("Hash goes here")
+        MainInputWithStateHoisting("Hash goes here") {}
     }
 }
