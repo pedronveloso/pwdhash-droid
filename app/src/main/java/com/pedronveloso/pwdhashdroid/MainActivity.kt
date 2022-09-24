@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             })
                         }
-                        composable(Screens.ABOUT) { AboutScreen() }
+                        composable(Screens.ABOUT) { AboutScreen(onNavBackPressed = { navController.popBackStack() }) }
                     }
                 }
             }
