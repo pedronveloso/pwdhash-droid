@@ -5,6 +5,7 @@
     <string name="site_password">Site Password</string>
     <string name="generate_action">Generate</string>
     <string name="copy_to_clipboard">Copy</string>
+    <string name="copied_to_clipboard_message">Copied to Clipboard</string>
 
     <string name="about">About</string>
     <string name="a11y_navigate_back">Navigate back</string>

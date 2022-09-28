@@ -43,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.pedronveloso.pwdhashdroid.hash.HashedPassword
 import com.pedronveloso.pwdhashdroid.ui.about.AboutScreen
 import com.pedronveloso.pwdhashdroid.ui.theme.PwdHashDroidTheme
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -75,7 +76,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(onNavToAbout: () -> Unit) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -94,13 +98,25 @@ fun MainScreen(onNavToAbout: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MainInputWithStateHoisting(onNavToAbout = onNavToAbout)
+                val copiedToClipboardMessage =
+                    stringResource(id = R.string.copied_to_clipboard_message)
+                MainInputWithStateHoisting(onNavToAbout = onNavToAbout) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            copiedToClipboardMessage
+                        )
+                    }
+                }
             }
         })
 }
 
 @Composable
-fun MainInputWithStateHoisting(hashInitialValue: String = "", onNavToAbout: () -> Unit) {
+fun MainInputWithStateHoisting(
+    hashInitialValue: String = "",
+    onNavToAbout: () -> Unit,
+    onCopyToClipboard: () -> Unit
+) {
     var siteAddress by remember { mutableStateOf("") }
     var sitePassword by remember { mutableStateOf("") }
     var generatedHash by remember { mutableStateOf(hashInitialValue) }
@@ -112,7 +128,8 @@ fun MainInputWithStateHoisting(hashInitialValue: String = "", onNavToAbout: () -
         onSidePasswordChange = { sitePassword = it },
         generatedHash = generatedHash,
         onGeneratedHashChange = { generatedHash = it },
-        onNavToAbout = onNavToAbout
+        onNavToAbout = onNavToAbout,
+        onCopyToClipboard = onCopyToClipboard
     )
 }
 
@@ -124,7 +141,8 @@ fun MainInputArea(
     onSidePasswordChange: (String) -> Unit,
     generatedHash: String,
     onGeneratedHashChange: (String) -> Unit,
-    onNavToAbout: () -> Unit
+    onNavToAbout: () -> Unit,
+    onCopyToClipboard: () -> Unit
 ) {
     // TODO: write tests for this Composable.
     Spacer(modifier = Modifier.size(16.dp))
@@ -148,7 +166,14 @@ fun MainInputArea(
             focus
         )
 
-        FormButtons(siteAddress, sitePassword, generatedHash, onGeneratedHashChange, focus)
+        FormButtons(
+            siteAddress,
+            sitePassword,
+            generatedHash,
+            focus,
+            onGeneratedHashChange,
+            onCopyToClipboard
+        )
 
         GeneratedHash(generatedHash)
         Spacer(
@@ -182,8 +207,9 @@ private fun FormButtons(
     siteAddress: String,
     sitePassword: String,
     generatedHash: String,
+    focus: FocusManager,
     onGeneratedHashChange: (String) -> Unit,
-    focus: FocusManager
+    onCopyToClipboard: () -> Unit
 ) {
     // Generate button.
     val context = LocalContext.current
@@ -204,6 +230,7 @@ private fun FormButtons(
             Button(onClick = {
                 focus.clearFocus()
                 copyToClipboard(context, generatedHash)
+                onCopyToClipboard()
             }, shape = RoundedCornerShape(8.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_copy),
@@ -332,6 +359,6 @@ fun generateHashAction(
 @Composable
 fun DefaultPreview() {
     PwdHashDroidTheme {
-        MainInputWithStateHoisting("Hash goes here") {}
+        MainInputWithStateHoisting("Hash goes here", {}, {})
     }
 }
