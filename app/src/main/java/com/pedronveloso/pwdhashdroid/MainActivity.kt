@@ -129,7 +129,9 @@ fun MainInputArea(
     // TODO: write tests for this Composable.
     Spacer(modifier = Modifier.size(16.dp))
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -231,6 +233,7 @@ private fun PasswordInput(
         label = { Text(stringResource(R.string.site_password)) },
         visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier
+            .fillMaxWidth()
             .focusRequester(FocusRequester.Default)
             .onKeyEvent {
                 when (it.key) {
@@ -272,6 +275,7 @@ private fun WebsiteAddressInput(
         onValueChange = onSiteAddressChange,
         singleLine = true,
         modifier = Modifier
+            .fillMaxWidth()
             .focusRequester(FocusRequester.Default)
             .onKeyEvent {
                 when (it.key) {
