@@ -181,7 +181,7 @@ fun MainInputArea(
                 .weight(1f)
         )
         AboutButton(onNavToAbout)
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(48.dp))
     }
 }
 
