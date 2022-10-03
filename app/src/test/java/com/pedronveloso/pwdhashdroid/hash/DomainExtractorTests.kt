@@ -6,7 +6,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class DomainExtractorTest {
+class DomainExtractorTests {
 
     lateinit var testSamples: HashMap<String, String>
 

@@ -50,8 +50,10 @@ object DomainExtractor {
         domain = domain.replace("http://", "")
         domain = domain.replace("https://", "")
         var firstSlash: Int
-        if (domain.indexOf("/").also { firstSlash = it } > -1) domain =
-            domain.substring(0, firstSlash)
+        if (domain.indexOf("/").also { firstSlash = it } > -1) {
+            domain =
+                domain.substring(0, firstSlash)
+        }
         val parts = domain.split("\\.".toRegex()).toTypedArray()
         if (parts.size > 2) {
             domain = parts[parts.size - 2] + "." + parts[parts.size - 1]
@@ -62,7 +64,8 @@ object DomainExtractor {
         return domain
     }
 
-    private val mSecondLevelDomains = arrayOf("ab.ca", "ac.ac", "ac.at",
+    private val mSecondLevelDomains = arrayOf(
+        "ab.ca", "ac.ac", "ac.at",
         "ac.be", "ac.cn", "ac.il", "ac.in", "ac.jp", "ac.kr", "ac.nz",
         "ac.th", "ac.uk", "ac.za", "adm.br", "adv.br", "agro.pl", "ah.cn",
         "aid.pl", "alt.za", "am.br", "arq.br", "art.br", "arts.ro",
@@ -105,5 +108,6 @@ object DomainExtractor {
         "tourism.pl", "travel.pl", "tur.br", "turystyka.pl", "tv.br",
         "tw.cn", "uk.co", "uk.com", "uk.net", "us.com", "uy.com", "vet.br",
         "web.za", "web.com", "www.ro", "xj.cn", "xz.cn", "yk.ca", "yn.cn",
-        "za.com")
+        "za.com"
+    )
 }

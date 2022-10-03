@@ -64,8 +64,11 @@ class HashedPassword private constructor(
 
     private fun calculateHash() {
         val md5 = createHmacMD5(mPassword, mRealm)
-        val hash = Base64.encodeToString(md5, Base64.NO_PADDING
-                or Base64.NO_WRAP)
+        val hash = Base64.encodeToString(
+            md5,
+            Base64.NO_PADDING
+                or Base64.NO_WRAP
+        )
         val size = mPassword.length + PasswordPrefix.length
         val nonAlphanumeric = NonAlphanumericMatcher.matcher(mPassword)
             .find()
@@ -73,12 +76,17 @@ class HashedPassword private constructor(
     }
 
     private fun applyConstraints(
-        hash: String, size: Int,
+        hash: String,
+        size: Int,
         nonAlphanumeric: Boolean
     ): String {
         var startingSize = size - 4
-        if (startingSize < 0) startingSize = 0 else if (startingSize > hash.length) startingSize =
-            hash.length
+        if (startingSize < 0) {
+            startingSize = 0
+        } else if (startingSize > hash.length) {
+            startingSize =
+                hash.length
+        }
         var result = hash.substring(0, startingSize)
         mExtras = LinkedList()
         for (c in hash.substring(startingSize).toCharArray()) {
@@ -87,23 +95,40 @@ class HashedPassword private constructor(
 
         // Add the extra characters
         result += if (Pattern.compile("[A-Z]").matcher(result)
-                .find()
-        ) nextExtraChar() else nextBetween('A', 26)
+            .find()
+        ) {
+            nextExtraChar()
+        } else {
+            nextBetween('A', 26)
+        }
         result += if (Pattern.compile("[a-z]").matcher(result)
-                .find()
-        ) nextExtraChar() else nextBetween('a', 26)
+            .find()
+        ) {
+            nextExtraChar()
+        } else {
+            nextBetween('a', 26)
+        }
         result += if (Pattern.compile("[0-9]").matcher(result)
-                .find()
-        ) nextExtraChar() else nextBetween('0', 10)
-        result += if (NonAlphanumericMatcher.matcher(result).find()
-            && nonAlphanumeric
-        ) nextExtraChar() else '+'
-        while (NonAlphanumericMatcher.matcher(result).find()
-            && !nonAlphanumeric
+            .find()
+        ) {
+            nextExtraChar()
+        } else {
+            nextBetween('0', 10)
+        }
+        result += if (NonAlphanumericMatcher.matcher(result).find() &&
+            nonAlphanumeric
+        ) {
+            nextExtraChar()
+        } else {
+            '+'
+        }
+        while (NonAlphanumericMatcher.matcher(result).find() &&
+            !nonAlphanumeric
         ) {
             val replacement = nextBetween('A', 26).toString()
             result = NonAlphanumericMatcher.matcher(result).replaceFirst(
-                replacement)
+                replacement
+            )
         }
 
         // For long passwords (about > 22 chars) the password might be longer
@@ -118,7 +143,7 @@ class HashedPassword private constructor(
         result = rotate(result, nextExtra())
 
         // Handle extra nulls after rotation if somehow that part survived the first filter.
-        if (result.startsWith("0000")){
+        if (result.startsWith("0000")) {
             result = result.drop(4)
         }
 
@@ -169,7 +194,9 @@ class HashedPassword private constructor(
             } catch (e: NoSuchAlgorithmException) {
                 Log.e(
                     HashedPassword::class.java.name,
-                    "HMAC_MD5 algorithm not supported on this platform.", e)
+                    "HMAC_MD5 algorithm not supported on this platform.",
+                    e
+                )
                 ByteArray(0)
             } catch (e: InvalidKeyException) {
                 Log.e(HashedPassword::class.java.name, "Invalid secret key.", e)
@@ -196,16 +223,23 @@ class HashedPassword private constructor(
             val bytes = ByteArray(data.length)
             for (i in data.indices) {
                 val codePoint = data.codePointAt(i)
-                if (codePoint <= 255) bytes[i] = codePoint.toByte() else {
+                if (codePoint <= 255) {
+                    bytes[i] = codePoint.toByte()
+                } else {
                     try {
                         val nonLatin1Char = data[i].toString()
                         val charBytes = nonLatin1Char.toByteArray(charset("UTF-16le"))
-                        val unsignedByte = (0x000000FF and charBytes[0]
-                            .toInt()).toShort()
+                        val unsignedByte = (
+                            0x000000FF and charBytes[0]
+                                .toInt()
+                            ).toShort()
                         bytes[i] = unsignedByte.toByte()
                     } catch (e: UnsupportedEncodingException) {
-                        Log.w("Decoding error", data[i].toString()
-                                + " could not be decoded as UTF-16le")
+                        Log.w(
+                            "Decoding error",
+                            data[i].toString() +
+                                " could not be decoded as UTF-16le"
+                        )
                         bytes[i] = 0x1A // SUB
                     }
                 }

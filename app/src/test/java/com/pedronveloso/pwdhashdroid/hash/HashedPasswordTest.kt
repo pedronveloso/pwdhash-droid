@@ -5,7 +5,6 @@ import com.pedronveloso.pwdhashdroid.hash.HashedPassword.Companion.create
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 @RunWith(AndroidJUnit4::class)
 class HashedPasswordTest {
@@ -67,7 +66,8 @@ class HashedPasswordTest {
     @Test
     fun testToStringWithLongSecret() {
         val hashedPassword = create(
-            "abcdefghijklmnopqrstuvwxyz0123456789=", "example.com"
+            "abcdefghijklmnopqrstuvwxyz0123456789=",
+            "example.com"
         )
         val result = hashedPassword.toString()
 

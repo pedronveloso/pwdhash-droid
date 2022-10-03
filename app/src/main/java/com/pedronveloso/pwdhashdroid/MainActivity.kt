@@ -45,7 +45,6 @@ import com.pedronveloso.pwdhashdroid.ui.about.AboutScreen
 import com.pedronveloso.pwdhashdroid.ui.theme.PwdHashDroidTheme
 import kotlinx.coroutines.launch
 
-
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,10 +86,11 @@ fun MainScreen(onNavToAbout: () -> Unit) {
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White,
-                ),
+                    titleContentColor = Color.White
+                )
             )
-        }, content = {
+        },
+        content = {
             Column(
                 modifier = Modifier
                     .padding(it)
@@ -108,7 +108,8 @@ fun MainScreen(onNavToAbout: () -> Unit) {
                     }
                 }
             }
-        })
+        }
+    )
 }
 
 @Composable
@@ -287,7 +288,6 @@ private fun PasswordInput(
             }
         )
     )
-
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -319,7 +319,7 @@ private fun WebsiteAddressInput(
             autoCorrect = false
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focus.moveFocus(FocusDirection.Next) },
+            onNext = { focus.moveFocus(FocusDirection.Next) }
         ),
         label = { Text(stringResource(R.string.site_address)) }
     )

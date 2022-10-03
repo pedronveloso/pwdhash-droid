@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import com.pedronveloso.pwdhashdroid.BuildConfig
 import com.pedronveloso.pwdhashdroid.R
 
-
 @Composable
 fun AboutScreen(onNavBackPressed: () -> Unit) {
     Scaffold(
@@ -41,10 +40,11 @@ fun AboutScreen(onNavBackPressed: () -> Unit) {
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White,
-                ),
+                    titleContentColor = Color.White
+                )
             )
-        }, content = {
+        },
+        content = {
             Column(
                 modifier = Modifier
                     .padding(it)
@@ -57,16 +57,21 @@ fun AboutScreen(onNavBackPressed: () -> Unit) {
                 val screenContents = buildScreenContents(context)
                 AboutScreenContent(screenContents)
             }
-        })
+        }
+    )
 }
 
 private fun buildScreenContents(context: Context): AboutScreenContents {
     val applicationInfo: ApplicationInfo = context.applicationInfo
     val stringId = applicationInfo.labelRes
     val appName =
-        if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else context.getString(
-            stringId
-        )
+        if (stringId == 0) {
+            applicationInfo.nonLocalizedLabel.toString()
+        } else {
+            context.getString(
+                stringId
+            )
+        }
     val appVersion = BuildConfig.VERSION_NAME
     val websiteUrl = "https://pedronveloso.com"
     val websiteLabel = "pedronveloso.com"
