@@ -3,7 +3,7 @@ name: AndroidLint
 on:
   pull_request:
     paths:
-      - .github/workflows/android-lint.yml
+      - .github/workflows/android-ci.yml
       - '*/src/**'
       - gradle/**
       - '**.gradle'
