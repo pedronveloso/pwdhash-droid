@@ -1,7 +1,7 @@
 name: AndroidLint
 
 on:
-  push:
+  pull_request:
     paths:
       - .github/workflows/android-lint.yml
       - '*/src/**'
