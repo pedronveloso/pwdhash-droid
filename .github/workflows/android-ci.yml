@@ -1,4 +1,4 @@
-name: AndroidLint
+name: AndroidCI
 
 on:
   pull_request:
@@ -15,5 +15,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      - uses: jmatsu/setup-android-problem-matcher@v1
+      #- uses: jmatsu/setup-android-problem-matcher@v1
       - run: ./gradlew test
+      - run: ./gradlew lint
