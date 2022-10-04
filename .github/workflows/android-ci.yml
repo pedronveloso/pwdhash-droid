@@ -1,24 +1,30 @@
-name: Android CI
-on: [push,pull_request]
+name: AndroidLint
+
+on:
+  push:
+    paths:
+      - .github/workflows/android-lint.yml
+      - '*/src/**'
+      - gradle/**
+      - '**.gradle'
+      - gradle.properties
+      - gradlew*
 
 jobs:
-  test:
+  android-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-
-      - name: set up JDK 1.8
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v3
         with:
-          java-version: 1.8
-
-      - name: Unit Test
-        run: ./gradlew testDebugUnitTest
-        continue-on-error: true # IMPORTANT: allow pipeline to continue to Android Test Report step
-        
-      - name: Lint Checks
-        run: ./gradlew lint
-        continue-on-error: true # IMPORTANT: allow pipeline to continue to Android Test Report step
-
-      - name: Android Test Report
-        uses: asadmansr/android-test-report-action@v1.2.0
+          fetch-depth: 1
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 11
+          cache: gradle
+      - run: ./gradlew lint
+      - uses: yutailang0119/action-android-lint@v3
+        with:
+          report-path: build/reports/*.xml # Support glob patterns by https://www.npmjs.com/package/@actions/glob
+        continue-on-error: false # If annotations contain error of severity, action-android-lint exit 1.
