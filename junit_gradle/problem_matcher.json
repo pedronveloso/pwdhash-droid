@@ -1,0 +1,18 @@
+{
+"problemMatcher": [
+{
+"owner": "android-gradle-junit",
+"severity": "error",
+"pattern": [
+{
+"regexp": "^(.+\\s>\\s.+)\\s+FAILED$",
+"code": 1
+},
+{
+"regexp": "^(.+)$",
+"message": 1
+}
+]
+}
+]
+}
