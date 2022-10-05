@@ -18,7 +18,8 @@ jobs:
           
       - run: ./gradlew testDebugUnitTest
         continue-on-error: false
-      - run: ./gradlew lint
+      
+      - run: ./gradlew lintDebug
       - uses: yutailang0119/action-android-lint@v3
         with:
           report-path: build/reports/*.xml # Support glob patterns by https://www.npmjs.com/package/@actions/glob
