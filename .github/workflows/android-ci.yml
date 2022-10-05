@@ -15,8 +15,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      #- uses: jmatsu/setup-android-problem-matcher@v1
-      #- run: ./gradlew test
+          
+      - run: ./gradlew testDebugUnitTest
+        continue-on-error: false
       - run: ./gradlew lint
       - uses: yutailang0119/action-android-lint@v3
         with:
