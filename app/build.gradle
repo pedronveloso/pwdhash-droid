@@ -50,6 +50,14 @@ android {
         }
     }
     namespace 'com.pedronveloso.pwdhashdroid'
+
+    lintOptions {
+        abortOnError true
+        htmlReport true
+        checkAllWarnings true
+        warningsAsErrors true
+        baseline file("lint-baseline.xml")
+    }
 }
 
 dependencies {

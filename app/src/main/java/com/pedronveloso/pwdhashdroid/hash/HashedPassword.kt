@@ -181,7 +181,7 @@ class HashedPassword private constructor(
             return result
         }
 
-        private fun createHmacMD5(key: String?, data: String?): ByteArray {
+        internal fun createHmacMD5(key: String?, data: String?): ByteArray {
             require(!(key == null || key == "")) { "key must not be null or empty" }
             requireNotNull(data) { "data must not be null" }
             val keyBytes = encodeStringToBytes(key)
@@ -247,11 +247,11 @@ class HashedPassword private constructor(
             return bytes
         }
 
-        private fun between(min: Int, interval: Int, offset: Int): Int {
+        internal fun between(min: Int, interval: Int, offset: Int): Int {
             return min + offset % interval
         }
 
-        private fun rotate(s: String, amount: Int): String {
+        internal fun rotate(s: String, amount: Int): String {
             var newAmount = amount
             val work: Queue<Char> = LinkedList()
             for (c in s.toCharArray()) {
