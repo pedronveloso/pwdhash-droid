@@ -56,6 +56,7 @@ android {
         htmlReport true
         checkAllWarnings true
         warningsAsErrors true
+        baseline file("lint-baseline.xml")
     }
 }
 
