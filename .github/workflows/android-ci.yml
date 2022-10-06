@@ -15,10 +15,16 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-          
+
+      # Run Unit Tests
       - run: ./gradlew testDebugUnitTest
         continue-on-error: false
-      
+
+      # Check ktlint formatting
+      - run: ./gradlew ktlintCheck
+        continue-on-error: false
+
+      # Check Android Linting.
       - run: ./gradlew lintDebug
       - uses: yutailang0119/action-android-lint@v3
         with:
