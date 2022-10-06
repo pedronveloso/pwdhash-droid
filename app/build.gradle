@@ -1,6 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
+}
+
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
 }
 
 android {
@@ -68,7 +73,7 @@ dependencies {
 
     // Jetpack Compose.
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-beta03'
+    implementation "androidx.compose.material3:material3:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.activity:activity-compose:1.6.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.3'
