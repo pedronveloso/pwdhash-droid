@@ -5,6 +5,7 @@ plugins {
 }
 
 ktlint {
+    version.set("0.44.0")
     disabledRules = ["no-wildcard-imports"]
 }
 
